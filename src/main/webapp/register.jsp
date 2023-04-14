@@ -17,6 +17,11 @@ function validateForm() {
 }
 </script>
 <style>
+body {
+  align-items: center;
+  margin-left: 36%;
+  margin-right: 36%;
+}
 {
   display: flex;
   flex-direction: column;
@@ -48,7 +53,7 @@ select {
 }
 
 input[type="tel"] {
-    width: 200px;
+    width: 195px;
 }
 
 input[type="submit"] {
@@ -57,12 +62,39 @@ input[type="submit"] {
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  width: 200px;
 }
 
 input[type="submit"]:hover {
   background-color: #3e8e41;
+}
+
+button {
+  background-color: #f0f0f0;
+  color: #808080;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  width: 200px;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+  color: #404040;
 }
 </style>
 </head>
@@ -96,7 +128,8 @@ input[type="submit"]:hover {
 		<input type="radio" id="sex" name="sex" value="F">女
 		<br><br>
 
-		<input type="submit" value="Submit">
+        <input type="submit" value="注册"/>
 	</form>
+    <button onclick="window.location.href = 'login.jsp'">已有账号？登录</button>
 </body>
 </html>
