@@ -1,25 +1,62 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.HashMap" %>
 <%@ page import="pyb.Commodity" %>
 <%@ page import="pyb.CommodityDao" %>
 <%@ page import="pyb.ServiceImpl" %>
 <%
+    Cookie[] cooklist = request.getCookies(); HashMap<String, String> cooktab = new HashMap<String, String>(); if (cooklist != null) { for (Cookie cookie : cooklist) { cooktab.put(cookie.getName(), cookie.getValue()); } }
 	int itemsPerPage = 10;
 	int pageNum = 1;
+    String loginName = cooktab.get("loginName");
+    if (loginName == null) loginName = "";
+    String search = "";
 	if (request.getParameter("page") != null) {
 		pageNum = Integer.parseInt(request.getParameter("page"));
     }
+	if (request.getParameter("search") != null) {
+		search = request.getParameter("search");
+    }
 	CommodityDao dao = new ServiceImpl().newCommodityDao();
-	List<Commodity> commodities = dao.listCommodityPage(pageNum, itemsPerPage);
-	int totalPages = dao.countCommodityPages(itemsPerPage);
+	List<Commodity> commodities = dao.listCommodityPage(pageNum, itemsPerPage, search);
+	int totalPages = dao.countCommodityPages(itemsPerPage, search);
 %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>商品列表</title>
+<% if (loginName.length() != 0) { %>
+<span>欢迎您，<% out.println(loginName); %></span> <a class="info-login" href="logout.jsp">退出</a>
+<% } else { %>
+亲爱的，请 <a class="info-login" href="login.jsp">登录</a> 或 <a class="info-login" href="register.jsp">注册</a>
+<% } %>
+<% if (search.length() != 0) { %>
+<form action="commodity.jsp">
+    <input class="input-search" type="text" name="search" placeholder="输入商品描述" value="<% out.print(search); %>"/>
+    <a class="search-clear" href="?">&nbsp;&times;&nbsp;</a>
+    <input class="submit-search" type="submit" value="搜索"/>
+</form>
+<% } else { %>
+<form action="commodity.jsp">
+    <input class="input-search" type="text" name="search" placeholder="输入商品描述"/>
+    <input class="submit-search" type="submit" value="搜索"/>
+</form>
+<% } %>
+<title>土豪购</title>
 <style>
+input.input-search {
+    font-size: 18px;
+    font-size: 18px;
+    background-color: #eeeeee;
+    color: #001100;
+}
+input.submit-search {
+    font-size: 18px;
+    background-color: lightgreen;
+    color: green;
+    font-weight: bold;
+}
 body {
   margin-left: 10%;
   margin-right: 10%;
@@ -28,7 +65,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: left;
+  justify-content: left;
 }
 .page-selector {
   position: absolute;
@@ -49,6 +87,17 @@ body {
 }
 .info-span:hover {
     background-color: #dfdfdf;
+}
+a.search-clear {
+    text-decoration: none;
+    background-color: #cc3311;
+    color: white;
+    font-weight: bold;
+}
+a.info-login {
+    text-decoration: none;
+    color: green;
+    font-weight: bold;
 }
 a.info-span {
     background-color: #4CAF50;
@@ -73,8 +122,9 @@ a.info-span:hover {
   width: 220px;
   border: 1px solid #cccccc;
   border-radius: 5px;
+  margin: 0.6%;
   transition: all 0.5s;
-	width: 19%;
+	width: 17%;
 	float: left;
 	text-align: center;
 }

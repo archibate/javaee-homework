@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 
 docker stop pybjava_mysql
 docker stop pybjava_tomcat

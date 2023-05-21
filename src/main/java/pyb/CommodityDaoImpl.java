@@ -26,13 +26,41 @@ public class CommodityDaoImpl extends BaseDaoImpl implements CommodityDao {
 		return true;
 	}
 
-    public List<Commodity> listCommodityPage(int pageNum, int itemsPerPage) throws SQLException {
+    private PreparedStatement makeUpSearchCondition(Connection conn, String sql, String searchKey, int pageNum, int itemsPerPage) throws SQLException {
+        String[] searchTerms = null;
+        if (searchKey != null && !searchKey.isEmpty()) {
+            searchTerms = searchKey.toLowerCase().split("\\s+");
+            if (searchTerms.length > 0) {
+                sql += "WHERE LOWER(c_info) LIKE ?";
+                for (int i = 1; i < searchTerms.length; i++) {
+                    sql += " AND LOWER(c_info) LIKE ?";
+                }
+            }
+        }
+        if (pageNum != -1) {
+            sql += " LIMIT ?, ?";
+        }
+        PreparedStatement stmt = conn.prepareStatement(sql);
+
+        int paramCount = 1;
+        if (searchTerms != null) {
+            for (String searchTerm : searchTerms) {
+                stmt.setString(paramCount, "%" + searchTerm + "%");
+                paramCount++;
+            }
+        }
+        if (pageNum != -1) {
+            stmt.setInt(paramCount, (pageNum - 1) * itemsPerPage);
+            paramCount++;
+            stmt.setInt(paramCount, itemsPerPage);
+        }
+        return stmt;
+    }
+
+    public List<Commodity> listCommodityPage(int pageNum, int itemsPerPage, String searchKey) throws SQLException {
         Connection conn = BaseDaoImpl.getConnection();
         conn.setAutoCommit(false);
-
-        PreparedStatement stmt = conn.prepareStatement("select * from commodity limit ?, ?");
-        stmt.setInt(1, (pageNum - 1) * itemsPerPage);
-        stmt.setInt(2, itemsPerPage);
+        PreparedStatement stmt = makeUpSearchCondition(conn, "SELECT * FROM commodity ", searchKey, pageNum, itemsPerPage);
         ResultSet rs = stmt.executeQuery();
         List<Commodity> commodities = new ArrayList<>();
         while (rs.next()) {
@@ -50,11 +78,11 @@ public class CommodityDaoImpl extends BaseDaoImpl implements CommodityDao {
         return commodities;
     }
 
-    public int countCommodityPages(int itemsPerPage) throws SQLException {
+    public int countCommodityPages(int itemsPerPage, String searchKey) throws SQLException {
         Connection conn = BaseDaoImpl.getConnection();
         conn.setAutoCommit(false);
 
-        PreparedStatement stmt = conn.prepareStatement("select count(*) from commodity");
+        PreparedStatement stmt = makeUpSearchCondition(conn, "SELECT COUNT(*) FROM commodity ", searchKey, -1, itemsPerPage);
         ResultSet rs = stmt.executeQuery();
         int totalItems = 0;
         if (rs.next()) {

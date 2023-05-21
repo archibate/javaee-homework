@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/api/register")
+@WebServlet("api-register")
 public class Register extends HttpServlet {
 
       public void doGet(HttpServletRequest request,
@@ -33,7 +33,7 @@ public class Register extends HttpServlet {
           
           UserDao userDao = new ServiceImpl().newUserDao();
           boolean ok = false;
-          String errmsg = "Unknown";
+          String errmsg = "用户名或电话或电子邮件已存在";
           try {
 			  ok = userDao.registerUser(user);
           } catch (SQLException e) {
@@ -43,9 +43,10 @@ public class Register extends HttpServlet {
 
           PrintWriter out = response.getWriter();
           if (ok) {
-        	  out.println("OK");
+        	  out.println("注册成功，正在跳转到登录页面");
+              response.sendRedirect("login.jsp");
           } else {
-        	  out.println("ERROR:" + errmsg);
+        	  out.println("注册失败：" + errmsg);
           }
       }
 

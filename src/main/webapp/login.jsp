@@ -90,7 +90,7 @@ button:hover {
 <body>
 	<h1>登&nbsp;&nbsp;录</h1>
 
-<form action="api/login">
+<form action="api-login">
     <label for="username">用户名：</label>
     <input type="text" name="username" required/>
     <br/>

@@ -101,7 +101,7 @@ button:hover {
 <body>
 	<h1>注&nbsp;&nbsp;册</h1>
 
-	<form action="api/register" onsubmit="return validateForm()">
+	<form action="api-register" onsubmit="return validateForm()">
 		<label for="tel">电话号码:</label>
 		<select id="region" name="region">
 			<option value="+86">中国大陆 (+86)</option>
@@ -123,7 +123,7 @@ button:hover {
 		<label for="confirm_password">确认密码:</label>
 		<input type="password" id="confirm_password" name="confirm_password" required><br>
 
-		<label for="sex">性别:</label>
+		<label for="sex" required>性别:</label>
     <input type="radio" id="sex" name="sex" value="M">男
 		<input type="radio" id="sex" name="sex" value="F">女
 		<br><br>
